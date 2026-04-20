@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VM 2026 Tipping — Stilling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --ink: #f0ece4;
+  --cream: #c0b9a8;
+  --paper: #0f1218;
+  --accent: #d4a843;
+  --accent-dim: #d4a84320;
+  --gold: #d4a843;
+  --silver: #94a3b8;
+  --bronze: #b45309;
+  --muted: #6b7a8d;
+  --line: #232a38;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', -apple-system, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(212,168,67,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 30% at 0% 50%, rgba(212,168,67,0.03) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 30% at 100% 50%, rgba(232,68,58,0.03) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+
+header { border-bottom: 2px solid var(--line); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+.brand {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.brand-accent { color: var(--accent); }
+.nav {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.nav a { color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; padding-bottom: 2px; transition: color 0.15s; }
+.nav a:hover { color: var(--ink); }
+.nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Hero */
+.hero {
+  background: #141821;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 2rem 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 100% 0%, rgba(212,168,67,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+.hero-leader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  position: relative;
+}
+.hero-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.hero-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(2rem, 6vw, 3rem);
+  color: var(--accent);
+}
+.hero-sub {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  position: relative;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.search {
+  flex: 1 1 240px;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  background: #141821;
+  color: var(--ink);
+}
+.search:focus { outline: none; border-color: var(--accent); }
+.search::placeholder { color: var(--muted); }
+.filter {
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  background: #141821;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.9375rem;
+}
+.filter option { background: #141821; }
+.tabs { display: flex; gap: 2px; background: var(--line); padding: 2px; border-radius: 6px; }
+.tab {
+  padding: 0.5rem 0.875rem;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+.tab.active { background: #141821; color: var(--accent); }
+
+/* Table */
+.lb-wrap { background: #141821; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.lb-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.lb-table th {
+  text-align: left;
+  padding: 0.625rem 0.75rem;
+  background: #1a1f2e;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 5;
+}
+.lb-table th.num, .lb-table td.num {
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+.lb-table td {
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.lb-table tr:hover { background: #1a1f2e; cursor: pointer; }
+.rank {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  width: 32px;
+  color: var(--muted);
+}
+.rank.r1 { color: var(--gold); }
+.rank.r2 { color: var(--silver); }
+.rank.r3 { color: var(--bronze); }
+.participant-name { font-weight: 600; }
+.participant-meta { font-size: 0.75rem; color: var(--muted); }
+.total-pts {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+/* Charts */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+@media (max-width: 640px) { .charts-grid { grid-template-columns: 1fr; } }
+.chart-card {
+  background: #141821;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+}
+.chart-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,10,16,0.8);
+  display: none; align-items: center; justify-content: center;
+  padding: 1rem; z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #141821;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto;
+  padding: 1.5rem;
+}
+.modal h3 { font-family: 'Oswald', sans-serif; font-size: 1.5rem; text-transform: uppercase; margin-bottom: 0.25rem; }
+.score-breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem; margin-top: 1rem;
+}
+.score-cell {
+  background: #1a1f2e;
+  border: 1px solid var(--line);
+  border-radius: 6px; padding: 0.5rem; text-align: center;
+}
+.score-cell .label { font-family: 'JetBrains Mono', monospace; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.score-cell .val { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.125rem; color: var(--accent); }
+
+.empty-state { padding: 3rem 1rem; text-align: center; color: var(--muted); }
+.loading {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid var(--accent); border-top-color: transparent;
+  border-radius: 50%; animation: spin 0.6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand">World Cup<span class="brand-accent"> 26</span> · Stilling</div>
+    <div class="nav">
+      <a href="index.html">Registrering</a>
+      <a href="report.html" class="active">Stilling</a>
+    </div>
+  </header>
+
+  <div class="hero" id="hero">
+    <div class="hero-label">FØRENDE</div>
+    <div class="hero-leader">
+      <div>
+        <div class="hero-name" id="leader-name">—</div>
+        <div class="hero-sub" id="leader-meta"></div>
+      </div>
+      <div>
+        <div class="hero-score" id="leader-score">—</div>
+        <div class="hero-sub" id="generated-at" style="text-align:right;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="text" class="search" id="search" placeholder="🔍 Søk navn…">
+    <select class="filter" id="filter-company"><option value="">Alle arbeidssteder</option></select>
+    <select class="filter" id="filter-dept"><option value="">Alle avdelinger</option></select>
+    <div class="tabs">
+      <button class="tab active" data-view="total">Total</button>
+      <button class="tab" data-view="no_extras">Uten extras</button>
+    </div>
+  </div>
+
+  <div class="lb-wrap">
+    <table class="lb-table" id="lb-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Deltaker</th>
+          <th class="num">Gruppe</th>
+          <th class="num">Ko</th>
+          <th class="num">Extras</th>
+          <th class="num">Total</th>
+        </tr>
+      </thead>
+      <tbody id="lb-body">
+        <tr><td colspan="6" class="empty-state"><span class="loading"></span> Laster stilling…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Topp 5 — Poengutvikling</div>
+      <canvas id="chart-distribution" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Poeng etter kategori — Top 10</div>
+      <canvas id="chart-categories" height="200"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this) closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>initSupabase();</script>
+<script src="report.js"></script>
+</body>
+</html>
