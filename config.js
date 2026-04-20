@@ -5,7 +5,7 @@
  * Finn dem i: Supabase Dashboard → Settings → API
  */
 
-const SUPABASE_URL  = 'https://qwvuliujdvleeszjlvcc.supabase.co';
+const SUPABASE_URL  = 'https://qwvuliujdvleeszjlvcc.supabase.co/rest/v1/';
 const SUPABASE_ANON = 'sb_publishable_cGj2TShuv4NYzIXZJnT8fg_OvxarA6V';
 
 
