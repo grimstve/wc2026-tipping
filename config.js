@@ -1,3 +1,4 @@
+// cache bust
 /**
  * config.js — Supabase-konfigurasjon
  *
@@ -7,7 +8,6 @@
 
 const SUPABASE_URL  = 'https://qwvuliujdvleeszjlvcc.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_cGj2TShuv4NYzIXZJnT8fg_OvxarA6V';
-
 
 
 const CONFIG = {
