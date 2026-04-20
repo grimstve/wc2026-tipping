@@ -5,8 +5,9 @@
  * Finn dem i: Supabase Dashboard → Settings → API
  */
 
-const SUPABASE_URL  = 'https://qwvuliujdvleeszljvcc.supabase.co';   // ← Din Project URL
-const SUPABASE_ANON = 'sb_publishable_cGj2TShuv4NYzIXZJnT8fg_OvxarA6V';              // ← Din publishable key
+const SUPABASE_URL  = 'https://qwvuliujdvleeszjlvcc.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_cGj2TShuv4NYzIXZJnT8fg_OvxarA6V';
+
 
 
 const CONFIG = {
