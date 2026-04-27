@@ -30,7 +30,6 @@ async function attemptLogin() {
     var ok = await API.verifyAdmin(pw);
     if (!ok) { errEl.textContent = 'Feil passord'; return; }
     state.password = pw;
-    sessionStorage.setItem('wc26_admin_pw', pw);
     document.getElementById('login').classList.add('hidden');
     document.getElementById('panel').classList.remove('hidden');
     renderPanel();
@@ -40,8 +39,6 @@ async function attemptLogin() {
 window.attemptLogin = attemptLogin;
 
 document.addEventListener('DOMContentLoaded', function() {
-  var saved = sessionStorage.getItem('wc26_admin_pw');
-  if (saved) { document.getElementById('pw-input').value = saved; attemptLogin(); }
   document.getElementById('pw-input').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') attemptLogin();
   });
@@ -106,7 +103,7 @@ async function loadParticipants() {
         '<td>' + escapeHTML(p.department) + '</td>' +
         '<td style="white-space:nowrap;">' +
           '<button class="btn btn-ghost" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="editParticipant(\'' + p.participant_id + '\')">✏️</button> ' +
-          '<button class="btn btn-danger" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="deleteParticipant(\'' + p.participant_id + '\',\'' + escapeHTML(p.full_name).replace(/'/g, "\\'") + '\')">🗑</button>' +
+          '<button class="btn btn-danger" style="padding:0.25rem 0.5rem;font-size:0.75rem;" onclick="deleteParticipant(\'' + p.participant_id + '\')">🗑</button>' +
         '</td></tr>';
     }).join('');
     el.innerHTML = '<div style="margin-bottom:0.75rem;font-family:JetBrains Mono,monospace;font-size:0.8125rem;color:var(--accent);">' + state.participants.length + ' deltakere</div>' +
@@ -116,7 +113,9 @@ async function loadParticipants() {
   }
 }
 
-window.deleteParticipant = async function(pid, name) {
+window.deleteParticipant = async function(pid) {
+  var p = state.participants.find(function(x) { return x.participant_id === pid; });
+  var name = p ? p.full_name : pid;
   if (!confirm('Slette deltaker "' + name + '" og alle deres tippinger?')) return;
   try {
     await API.adminDeleteParticipant(state.password, pid);
