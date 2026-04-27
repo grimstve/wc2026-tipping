@@ -1,0 +1,24 @@
+name: create-azure-static-webapp
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  actions: write
+
+jobs:
+  deploy:
+    uses: AkerBP/akerbp-workflows/.github/workflows/create-static-web-app.yml@main
+    with:
+      branch: "main"
+      location: "westeurope"
+      owned_by: ${{ github.actor }}
+      repo_address: "https://github.com/grimstve/wc2026-tipping.git"
+      resource_group: "rg-wc2026-tipping"
+      webapp_name: "wc2026-tipping"
+      sku: "Standard"
+    secrets:
+      creds: ${{ secrets.AML_AZURE_CREDENTIALS }}
+      PAT_AZ_STATICWEBAPP: ${{ secrets.PAT_AZ_STATICWEBAPP }}
