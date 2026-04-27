@@ -1,0 +1,11 @@
+# Supabase credentials — NEVER commit this file
+config.js
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.suo
+*.user
